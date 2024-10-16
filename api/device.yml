@@ -1,0 +1,130 @@
+openapi: "3.0.3"
+info:
+  title: Device API
+  version: "1.0"
+tags:
+  - name: Device
+paths:
+  /device:
+    post:
+      tags:
+        - Device
+      summary: Add a new device
+      description: Add a new device
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeviceRequest"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceResponse"
+
+  /device/{deviceID}:
+    put:
+      tags:
+        - Device
+      summary: Update an existing device
+      description: Give a command to the device that turns it on, turns it off, sets the temperature, and so on.
+      parameters:
+        - name: deviceID
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config: {}
+        required: true
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Device not found
+    get:
+      tags:
+        - Device
+      summary: Get device information
+      description: Get device information
+      parameters:
+        - name: deviceID
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceResponse"
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Device not found
+    delete:
+      tags:
+        - Device
+      summary: Remove the device
+      description: Remove the device
+      parameters:
+        - name: deviceID
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/UUID"
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Device not found
+components:
+  schemas:
+    DeviceRequest:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        user_id:
+          $ref: "#/components/schemas/UUID"
+        type:
+          $ref: "#/components/schemas/DeviceType"
+        name:
+          type: string
+    DeviceResponse:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/UUID"
+        type:
+          $ref: "#/components/schemas/DeviceType"
+        status:
+          type: string
+          enum:
+            - Off
+            - On
+        name:
+          type: string
+        config: {}
+    DeviceType:
+      type: string
+      enum:
+        - sensor
+        - relay
+        - ...
+    UUID:
+      type: string
+      format: UUID

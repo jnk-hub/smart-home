@@ -1,0 +1,56 @@
+@startuml Containers
+!theme plain
+title Smart Home — Containers
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+
+Person(Customer, "Customer")
+
+System_Boundary(SmartHome, "Smart Home") {
+	Container(APIGW, "API GateWay")
+	Container(Auth, "Auth Service")
+	Container(User, "User Service")
+	Container(Payment, "Payment Service")
+	Container(Notification, "Notification Service")
+	Container(Device, "Device Service")
+	Container(Telemetry, "Telemetry Service")
+	
+	ContainerDb(AuthDB, "Auth DB")
+	ContainerDb(UserDB, "User DB")
+	ContainerDb(PaymentDB, "Payment DB")
+	ContainerDb(NotificationDB, "Notification DB")
+	ContainerDb(DeviceDB, "Device DB")
+	ContainerDb(TelemetryDB, "Telemetry DB")
+	
+	ContainerQueue(DataBus, "Data Bus", "Kafka")
+}
+
+System_Ext(ExtPayment, "Payment System")
+System_Ext(UserDevices, "User's Devices")
+
+Rel(Customer, APIGW, "Send requests")
+Rel_L(APIGW, Auth, "Verify authentication and authorization")
+Rel(Auth, User, "Get authorization data")
+Rel(APIGW, Payment, "Manage payment")
+Rel(APIGW, Device, "Manage devices")
+Rel(APIGW, Telemetry, "View telemetry")
+Rel(APIGW, User, "Registration, manage user data")
+
+Rel(Payment, DataBus, "Send payment data")
+BiRel(Device, DataBus, "Receive sensor data and send commands for devices")
+Rel(Telemetry, DataBus, "Receive sensor data")
+Rel(Notification, DataBus, "Receive data")
+
+Rel_U(Notification, Customer, "Notify")
+
+Rel(Auth, AuthDB, "Save tokens and authorization sessions")
+Rel(User, UserDB, "Save User Data")
+Rel(Notification, NotificationDB, "Save Notifications")
+Rel(Payment, PaymentDB, "Save Payment Data")
+Rel(Device, DeviceDB, "Save Device Data and Commands")
+Rel(Telemetry, TelemetryDB, "Save Telemetry Data")
+
+Rel(Payment, ExtPayment, "Manage payment")
+BiRel_U(UserDevices, DataBus, "Send sensor data and receive commands for devices")
+@enduml
