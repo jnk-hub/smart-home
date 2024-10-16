@@ -1,0 +1,73 @@
+@startuml ER
+!theme plain
+skinparam linetype ortho
+
+package auth as "Auth Setvice" {
+	entity "Tokens" as tokens {
+		*token_id: number <<generated>>
+		*token : text
+		--
+		*user_id : UUID <<FK>>
+	}
+}
+
+package user as "User Setvice" {
+	entity "Users" as users {
+	  *user_id : UUID
+	  *name : text
+	  *status : enum
+	}
+}
+
+package device as "Device Setvice" {
+	entity "Devices" as devices {
+		*device_id : UUID
+		*type : enum
+		*status : enum
+		added_at : timestamp
+		--
+		*user_id : UUID <<FK>>
+	}
+	entity "Comands" as commands {
+		*command_id : UUID
+		*created_at : timestamp
+		--
+		*device_id : UUID <<FK>>
+	}
+}
+
+package telemetry as "Telemetry Setvice" {
+	entity "Telemetries" as telementies {
+		*telemetry_id : UUID
+		*created_at : timestamp
+		--
+		*device_id : UUID <<FK>>
+	}
+}
+
+package payment as "Payment Setvice" {
+	entity "Payments" as payments {
+		*payment_id : UUID
+		*created_at : timestamp
+		updated_at : timestamp
+		*status : enum
+		--
+		*user_id : UUID <<FK>>
+	}
+}
+
+package notification as "Notification Setvice" {
+	entity "Notifications" as notifications {
+		*notification_id : UUID
+		--
+		*user_id : UUID
+	}
+}
+
+users ||..|{ tokens
+users ||..o{ devices
+users ||..o{ payments
+users }o..o{ notifications
+devices ||..o{ commands
+devices ||..o{ telementies
+@enduml

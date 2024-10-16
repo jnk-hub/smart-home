@@ -1,0 +1,21 @@
+@startuml Context
+!theme plain
+set separator none
+title Smart Home - System Context
+
+top to bottom direction
+
+!include <C4/C4>
+!include <C4/C4_Context>
+
+Person(Customer, "Smart Home Customer", $descr="A smart home customer who has installed sensors and connected to the system.")
+
+System_Ext(HeatingSystem, "Heating system", $descr="Customer-installed sensors and heater.")
+
+System(SmartHomeSystem, "Smart Home System", $descr="Allows customers to control the heating in the home and monitor the temperature.")
+
+Rel(Customer, SmartHomeSystem, "using", $descr="Controls heating and monitors temperature")
+Rel(SmartHomeSystem, HeatingSystem, "using", $descr="Receives information from sensors, controls heating")
+
+SHOW_LEGEND(true)
+@enduml
